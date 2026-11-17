@@ -1,9 +1,11 @@
-# Tag vX.Y.Z -> all checks -> APK attached to a GitHub Release (a permanent download link).
+# Tag vX.Y.Z, or Actions > release > Run workflow -> all checks -> APK attached to a GitHub Release
+# (a permanent download link). A manual run uses the version in app/pubspec.yaml as the tag.
 name: release
 
 on:
   push:
     tags: ['v*']
+  workflow_dispatch:
 
 permissions:
   contents: read
@@ -21,6 +23,7 @@ jobs:
     permissions:
       contents: write
     steps:
+      - uses: actions/checkout@v4
       - uses: actions/download-artifact@v4
         with:
           name: enduraforge-apk
@@ -28,5 +31,13 @@ jobs:
       - name: Create the release
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          TAG: ${{ github.ref_name }}
-        run: gh release create "$TAG" dist/*.apk --repo "$GITHUB_REPOSITORY" --title "EnduraForge $TAG" --generate-notes
+          REF_TYPE: ${{ github.ref_type }}
+          REF_NAME: ${{ github.ref_name }}
+        run: |
+          if [ "$REF_TYPE" = tag ]; then TAG="$REF_NAME"; else TAG="v$(grep '^version:' app/pubspec.yaml | awk '{print $2}' | cut -d+ -f1)"; fi
+          if gh release view "$TAG" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+            gh release upload "$TAG" dist/*.apk --clobber --repo "$GITHUB_REPOSITORY"
+          else
+            gh release create "$TAG" dist/*.apk --repo "$GITHUB_REPOSITORY" --target "$GITHUB_SHA" --title "EnduraForge $TAG" --generate-notes
+          fi
+          echo "Download: https://github.com/$GITHUB_REPOSITORY/releases/tag/$TAG" >> "$GITHUB_STEP_SUMMARY"
