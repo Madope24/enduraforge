@@ -1,0 +1,37 @@
+# Server stack. The deploy workflow copies this file, deploy.sh and a generated .env to ~/salum-tracker (production)
+# or ~/salum-tracker-staging (staging). The stack name (-p) keeps their databases apart.
+name: salum-tracker
+
+services:
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: salum
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD in .env}
+      POSTGRES_DB: salum
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U salum -d salum"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  api:
+    image: ${API_IMAGE:?set API_IMAGE in .env}
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: postgresql+psycopg://salum:${POSTGRES_PASSWORD}@db:5432/salum
+      JWT_SECRET: ${JWT_SECRET:?set JWT_SECRET in .env}
+      REGISTRATION_MODE: ${REGISTRATION_MODE:-first-only}
+      TOKEN_DAYS: ${TOKEN_DAYS:-60}
+      LOG_LEVEL: ${LOG_LEVEL:-INFO}
+    ports:
+      - "${APP_PORT:-8090}:8000"
+
+volumes:
+  pgdata:
