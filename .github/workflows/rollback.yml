@@ -1,0 +1,52 @@
+# Manually redeploy an earlier image: Actions > rollback > Run workflow, enter the commit SHA.
+name: rollback
+
+on:
+  workflow_dispatch:
+    inputs:
+      sha:
+        description: Full commit SHA of the version to restore (see ~/salum-tracker/deployed_images.log)
+        required: true
+      environment:
+        description: Where to roll back
+        type: choice
+        options: [production, staging]
+        default: production
+
+permissions:
+  contents: read
+
+concurrency:
+  group: deploy
+  cancel-in-progress: false
+
+jobs:
+  rollback:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    environment: ${{ inputs.environment }}
+    permissions:
+      contents: read
+      packages: read
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check the SHA
+        env:
+          SHA: ${{ inputs.sha }}
+        run: echo "$SHA" | grep -Eq '^[0-9a-f]{40}$' || { echo "Enter the full 40-character commit SHA"; exit 1; }
+      - name: Redeploy
+        env:
+          SSH_HOST: ${{ secrets.SSH_HOST }}
+          SSH_USER: ${{ secrets.SSH_USER }}
+          SSH_KEY: ${{ secrets.SSH_KEY }}
+          API_IMAGE: ghcr.io/${{ github.repository }}-api:${{ inputs.sha }}
+          POSTGRES_PASSWORD: ${{ inputs.environment == 'staging' && (secrets.STAGING_POSTGRES_PASSWORD || secrets.POSTGRES_PASSWORD) || secrets.POSTGRES_PASSWORD }}
+          JWT_SECRET: ${{ inputs.environment == 'staging' && (secrets.STAGING_JWT_SECRET || secrets.JWT_SECRET) || secrets.JWT_SECRET }}
+          STACK: ${{ inputs.environment == 'staging' && 'salum-tracker-staging' || 'salum-tracker' }}
+          APP_PORT: ${{ inputs.environment == 'staging' && '8091' || '8090' }}
+          BACKUP_FIRST: ${{ inputs.environment == 'production' && '1' || '' }}
+          REGISTRY_USER: ${{ github.actor }}
+          REGISTRY_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          export API_IMAGE=$(echo "$API_IMAGE" | tr 'A-Z' 'a-z')
+          sh deploy/remote.sh

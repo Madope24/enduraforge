@@ -42,7 +42,7 @@ In your repository on github.com:
 
 1. **Settings > Environments > New environment**, name it `staging`. No reviewers.
 2. **Settings > Environments > production > Required reviewers**: add yourself. Every production deploy then waits for your approval.
-3. **Settings > Code security**: turn on Dependabot alerts, secret scanning and CodeQL (code scanning).
+3. **Settings > Code security**: turn on Dependabot alerts and secret scanning, and under **Code scanning > CodeQL analysis** choose **Set up > Default**.
 4. Optional: separate staging secrets `STAGING_POSTGRES_PASSWORD` and `STAGING_JWT_SECRET` under the staging environment. Without them, staging uses the production values with its own separate database.
 
 ## 3. Push and watch

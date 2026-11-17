@@ -1,0 +1,38 @@
+# Secrets and local config
+.env
+.env.*
+*.keystore
+*.jks
+key.properties
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.pytest_cache/
+.ruff_cache/
+server/tests/test.db
+*.db
+
+# Flutter / Android (android/ is generated in CI by flutter create + android_patch.py)
+app/android/
+app/ios/
+app/build/
+app/.dart_tool/
+app/.flutter-plugins
+app/.flutter-plugins-dependencies
+app/.metadata
+app/pubspec.lock
+app/test/widget_test.dart
+*.iml
+.idea/
+
+# OS / editors
+.DS_Store
+Thumbs.db
+.vscode/
+
+# Server backups
+backups/
+deployed_images.log

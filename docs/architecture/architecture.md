@@ -58,6 +58,6 @@ flowchart LR
 
 ## Security
 - Secrets exist only as GitHub secrets and in the server's `.env` (mode 600). Nothing is committed.
-- Least-privilege workflow permissions; CodeQL; gitleaks secret scan; pip-audit; Dependabot.
+- Least-privilege workflow permissions; CodeQL (GitHub default setup); gitleaks secret scan; pip-audit; Dependabot.
 - CSV export escapes spreadsheet formulas.
 - Recommended: put the API behind HTTPS (Caddy or nginx with Let's Encrypt) and then turn off cleartext in `android_patch.py`.

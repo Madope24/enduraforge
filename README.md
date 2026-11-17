@@ -10,7 +10,7 @@ server/       FastAPI API (/api/v1) and the plan engine (server/app/engine): rac
 plan/         gen_plan.py writes the bundled default plan into the app (CI checks it is current).
 deploy/       docker-compose.yml, deploy.sh (health + smoke tests + automatic rollback), backup.sh.
 docs/         Product requirements, architecture, database, design system, API, coaching season, deploy guide.
-.github/      ci (every PR), deploy (staging -> approval -> production), rollback, release (APK), codeql, dependabot.
+.github/      ci (every PR and branch), deploy (staging -> approval -> production), rollback, release (APK), dependabot.
 docker-compose.yml   Local development stack.
 ```
 
