@@ -49,4 +49,4 @@ jobs:
           REGISTRY_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           export API_IMAGE=$(echo "$API_IMAGE" | tr 'A-Z' 'a-z')
-          sh deploy/remote.sh
+          bash deploy/remote.sh

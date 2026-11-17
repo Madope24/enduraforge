@@ -69,7 +69,7 @@ jobs:
           APP_PORT: '8091'
           REGISTRY_USER: ${{ github.actor }}
           REGISTRY_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: sh deploy/remote.sh
+        run: bash deploy/remote.sh
 
   production:
     needs: [publish, staging]
@@ -94,4 +94,4 @@ jobs:
           BACKUP_FIRST: '1'
           REGISTRY_USER: ${{ github.actor }}
           REGISTRY_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: sh deploy/remote.sh
+        run: bash deploy/remote.sh
