@@ -28,12 +28,15 @@ void main() {
     expect(weeks.first['planned'] as int, greaterThan(0));
     final g1 = goalStatus(plan, goal('Goal 1'), days, <String, double?>{}, weeks, '2026-11-09');
     expect(g1['status'], 'On track');
-    final m = asList(plan['mini_goals']).map(asMap).firstWhere((x) => x['text'] == 'Long run 6 km');
-    expect(miniStatus(plan, m, days, <String, double?>{}, '2026-11-09')['status'], 'Hit');
+    final m = asList(plan['mini_goals']).map(asMap).firstWhere((x) => x['text'] == 'Long run 8 km');
+    expect(miniStatus(plan, m, days, <String, double?>{}, '2026-11-09')['status'], isNot('Hit'));
+    final Logs longer = {for (final e in days.entries) e.key: {...e.value}};
+    longer['2026-11-08']!['run_km'] = 8.2;
+    expect(miniStatus(plan, m, longer, <String, double?>{}, '2026-11-09')['status'], 'Hit');
     final g2 = goalStatus(plan, goal('Goal 2'), days, <String, double?>{}, weeks, '2026-11-09');
     expect(g2['status'], 'In progress');
     expect(g2['progress'], 0.7);
-    final done = goalStatus(plan, goal('Goal 2'), days, <String, double?>{'goal:Goal 2': 112}, weeks, '2026-12-05');
+    final done = goalStatus(plan, goal('Goal 2'), days, <String, double?>{'goal:Goal 2': 98}, weeks, '2026-12-05');
     expect(done['status'], 'Achieved');
   });
 

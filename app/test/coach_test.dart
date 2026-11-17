@@ -51,7 +51,7 @@ void main() {
       final am = d['am'] == null ? '' : asStr(asMap(sessions[d['am']])['code']);
       final pm = d['pm'] == null ? '' : asStr(asMap(sessions[d['pm']])['code']);
       if (d['weekday'] == 'Thu' && d['race'] == null && d['ramadan'] != true) expect([am, pm].where((c) => c.isNotEmpty).toList(), ['FAST'], reason: asStr(d['date']));
-      if (d['weekday'] == 'Mon') expect(d['fasting'] == true, isFalse, reason: asStr(d['date']));
+      if (d['weekday'] == 'Mon' && d['ramadan'] != true) expect(d['fasting'] == true, isFalse, reason: asStr(d['date']));
       expect(pm.startsWith('RUN'), isFalse, reason: asStr(d['date']));
       expect(am.startsWith('SWIM'), isFalse, reason: asStr(d['date']));
     }

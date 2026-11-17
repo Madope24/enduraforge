@@ -144,7 +144,7 @@ class HomeScreen extends StatelessWidget {
     final longest = st.longestRun;
     final longKm = longest == null ? 0.0 : longest['km'] as double;
     final nowPace = longest == null ? null : longest['pace'] as double?;
-    final double? targetPace = (isRun && t != null) ? t / km! : null;
+    final double? targetPace = (isRun && t != null) ? t / km : null;
     return Section(
       title: 'Target: ${asStr(race['name'])}',
       accent: C.accent,
@@ -163,7 +163,7 @@ class HomeScreen extends StatelessWidget {
           Text('Longest run so far: ${fmtNum(longKm)} of ${fmtNum(km)} km${longest == null ? '' : ' (${prettyDate(asStr(longest['date']))})'}',
               style: TextStyle(color: C.text, fontSize: 13.5)),
           const SizedBox(height: 5),
-          Bar(longKm / km!, color: C.accent),
+          Bar(longKm / km, color: C.accent),
           if (nowPace != null && targetPace != null) ...[
             const SizedBox(height: 8),
             Text(
